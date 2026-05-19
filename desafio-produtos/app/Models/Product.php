@@ -23,6 +23,7 @@ class Product extends Model
         'stock' => 'integer',
     ];
 
+    // to allow mass assignment, which is necessary when you use create() and update() with arrays.
     public function scopeFilter(Builder $query, array $filters): Builder
     {
         return $query
