@@ -1,5 +1,20 @@
 # product_management_api
-# README.md
+
+## Project Architecture
+```bash
+/home/engineer/Projetos/product_management_api/
+├── app/
+├── bootstrap/
+├── config/
+├── database/
+├── routes/
+├── tests/
+├── artisan
+├── composer.json
+├── .env
+├── README.md
+└── ... (arquivos Laravel)
+```
 
 ## Requisitos
 - PHP 8.2+
