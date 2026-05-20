@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -39,5 +40,16 @@ class ProductApiTest extends TestCase
             'name' => 'Mouse Gamer',
             'stock' => 10,
         ]);
+    }
+
+     public function test_can_list_products(): void
+    {
+        Product::factory()->count(3)->create();
+
+        $response = $this->getJson('/api/products');
+
+        $response
+            ->assertOk()
+            ->assertJsonPath('success', true);
     }
 }
