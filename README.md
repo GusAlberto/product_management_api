@@ -1,5 +1,20 @@
 # product_management_api
-# README.md
+
+## Project Architecture
+```bash
+/home/engineer/Projetos/product_management_api/
+├── app/
+├── bootstrap/
+├── config/
+├── database/
+├── routes/
+├── tests/
+├── artisan
+├── composer.json
+├── .env
+├── README.md
+└── ... (arquivos Laravel)
+```
 
 ## Requisitos
 - PHP 8.2+
@@ -55,8 +70,47 @@ json
 # Verificar se PHP tem SQLite
 php -m | grep -i sqlite
 
-# Rodar migrations (para garantir DB sqlite populado)
-php artisan migrate
+		```bash
+		touch database/database.sqlite
+		php artisan migrate
+		```
 
-# Rodar o teste específico
-php artisan test --filter ProductApiTest
+	- Run tests (uses the same DB file unless you override):
+
+		```bash
+		php artisan test --filter ProductApiTest
+		```
+---
+
+# **Suporte MySQL Opcional**: 
+Há um arquivo `docker-compose.yml` de conveniência fornecido se você quiser executar uma instância MySQL local com as credenciais padrão.
+
+	- Inicie o MySQL com Docker (ou use o comando `docker run` mostrado abaixo):
+
+		```bash
+		# usando docker run (funciona sem o plugin docker-compose)
+		docker run -d --name desafio_produtos_db \
+			-e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=desafio_produtos \
+			-p 3306:3306 -v "$PWD/mysql_data":/var/lib/mysql mysql:8.0
+
+		# ou se você usar docker compose: docker compose up -d
+		```
+
+	- Para usar MySQL, atualize `.env` (ou crie um `.env.testing`) com:
+
+		```env
+		DB_CONNECTION=mysql
+		DB_HOST=127.0.0.1
+		DB_PORT=3306
+		DB_DATABASE=desafio_produtos
+		DB_USERNAME=root
+		DB_PASSWORD=root
+		```
+
+	- Execute as migrações contra MySQL e rode os testes:
+
+		```bash
+		php artisan migrate
+		php artisan test --filter ProductApiTest
+		```
+
