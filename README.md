@@ -109,6 +109,8 @@ php artisan test --filter ProductApiTest
 ./vendor/bin/phpunit tests/Feature/ProductApiTest.php
 ```
 
+![Resultado dos testes](tests_print.png)
+
 ## Endpoints da API
 
 ### Listar Produtos
