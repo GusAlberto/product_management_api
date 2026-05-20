@@ -1,116 +1,196 @@
 # product_management_api
 
-## Project Architecture
-```bash
-/home/engineer/Projetos/product_management_api/
-├── app/
-├── bootstrap/
-├── config/
-├── database/
-├── routes/
-├── tests/
-├── artisan
-├── composer.json
-├── .env
-├── README.md
-└── ... (arquivos Laravel)
-```
+API REST para gerenciamento de produtos com Laravel 11.
 
 ## Requisitos
 - PHP 8.2+
 - Composer
-- Laravel 11
-- Banco relacional (MySQL/PostgreSQL/SQLite)
+- SQLite (padrão) ou MySQL (opcional)
 
-## Instalação
-1. Clone o repositório
-2. Execute: composer install
-3. Copie .env.example para .env
-4. Configure o banco
-5. Execute: php artisan key:generate
-6. Execute: php artisan migrate
-7. Execute: php artisan serve
+## Instalação Rápida
 
-## Rodando os testes
+```bash
+# 1. Clone o repositório
+git clone https://github.com/GusAlberto/product_management_api.git
+cd product_management_api
+
+# 2. Instale as dependências
+composer install
+
+# 3. Configure o arquivo de ambiente
+cp .env.example .env
+
+# 4. Gere a chave da aplicação
+php artisan key:generate
+
+# 5. Configure o banco (veja seção abaixo)
+
+# 6. Execute as migrações
+php artisan migrate
+
+# 7. Inicie o servidor
+php artisan serve
+```
+
+A aplicação estará disponível em `http://localhost:8000`.
+
+## Configuração do Banco de Dados
+
+### SQLite (Recomendado para Desenvolvimento Local)
+
+**Padrão**: O projeto já está configurado para usar SQLite. Só precisa criar o arquivo de banco:
+
+```bash
+# Criar o arquivo SQLite
+touch database/database.sqlite
+
+# Executar as migrações
+php artisan migrate
+```
+
+**Verificar se PHP suporta SQLite**:
+```bash
+php -m | grep -i sqlite
+```
+
+Se não aparecer `pdo_sqlite`, instale (Debian/Ubuntu):
+```bash
+sudo apt update && sudo apt install -y php8.3-sqlite3 sqlite3
+```
+
+### MySQL (Opcional)
+
+Se preferir usar MySQL localmente, há um arquivo `docker-compose.yml` de conveniência.
+
+**Opção 1: Usar Docker Compose**
+```bash
+# Inicie o MySQL
+docker compose up -d
+
+# Configure o .env
+cat > .env << EOF
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=desafio_produtos
+DB_USERNAME=root
+DB_PASSWORD=root
+EOF
+
+# Execute as migrações
+php artisan migrate
+```
+
+**Opção 2: Usar docker run (sem plugin compose)**
+```bash
+# Inicie o container MySQL
+docker run -d --name desafio_produtos_db \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=desafio_produtos \
+  -p 3306:3306 \
+  mysql:8.0
+
+# Configure o .env (como acima)
+
+# Execute as migrações
+php artisan migrate
+```
+
+## Rodando os Testes
+
+```bash
+# Todos os testes
 php artisan test
 
-## Endpoints
-- GET /api/products
-- POST /api/products
-- GET /api/products/{id}
-- PUT /api/products/{id}
-- DELETE /api/products/{id}
+# Apenas o teste de produtos
+php artisan test --filter ProductApiTest
 
-## Filtros
-Exemplo:
+# Com saída detalhada
+./vendor/bin/phpunit tests/Feature/ProductApiTest.php
+```
+
+## Endpoints da API
+
+### Listar Produtos
+```bash
 GET /api/products?name=mouse&min_price=50&max_price=200&min_stock=1&page=1&per_page=10
-Collection mínima do Insomnia:
+```
 
-GET /api/products
-
+### Criar Produto
+```bash
 POST /api/products
+Content-Type: application/json
 
-GET /api/products/{id}
-
-PUT /api/products/{id}
-
-DELETE /api/products/{id}
-
-Exemplo de body para POST/PUT:
-
-json
 {
   "name": "Mouse Gamer",
   "description": "Mouse com 6 botões",
   "price": 199.90,
   "stock": 25
 }
+```
 
----
-# Verificar se PHP tem SQLite
-php -m | grep -i sqlite
+### Obter Produto Específico
+```bash
+GET /api/products/{id}
+```
 
-		```bash
-		touch database/database.sqlite
-		php artisan migrate
-		```
+### Atualizar Produto
+```bash
+PUT /api/products/{id}
+Content-Type: application/json
 
-	- Run tests (uses the same DB file unless you override):
+{
+  "name": "Mouse Gamer RGB",
+  "description": "Mouse com 6 botões RGB",
+  "price": 249.90,
+  "stock": 15
+}
+```
 
-		```bash
-		php artisan test --filter ProductApiTest
-		```
----
+### Deletar Produto
+```bash
+DELETE /api/products/{id}
+```
 
-# **Suporte MySQL Opcional**: 
-Há um arquivo `docker-compose.yml` de conveniência fornecido se você quiser executar uma instância MySQL local com as credenciais padrão.
+## Estrutura do Projeto
 
-	- Inicie o MySQL com Docker (ou use o comando `docker run` mostrado abaixo):
+```bash
+/home/engineer/Projetos/product_management_api/
+├── app/
+│   ├── Http/Controllers/     # Controllers da API
+│   ├── Models/               # Modelos Eloquent
+│   └── Traits/               # Traits reutilizáveis
+├── database/
+│   ├── migrations/           # Migrações do banco
+│   ├── factories/            # Factories para testes
+│   └── database.sqlite       # Arquivo SQLite (criado automaticamente)
+├── routes/
+│   ├── api.php               # Rotas da API
+│   ├── web.php               # Rotas web
+│   └── console.php           # Comandos console
+├── tests/
+│   ├── Feature/              # Testes de funcionalidade
+│   └── Unit/                 # Testes unitários
+├── .env                      # Variáveis de ambiente
+├── artisan                   # CLI do Laravel
+├── composer.json             # Dependências PHP
+└── README.md                 # Este arquivo
+```
 
-		```bash
-		# usando docker run (funciona sem o plugin docker-compose)
-		docker run -d --name desafio_produtos_db \
-			-e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=desafio_produtos \
-			-p 3306:3306 -v "$PWD/mysql_data":/var/lib/mysql mysql:8.0
+## Filtros de Busca
 
-		# ou se você usar docker compose: docker compose up -d
-		```
+A endpoint `GET /api/products` aceita os seguintes filtros:
 
-	- Para usar MySQL, atualize `.env` (ou crie um `.env.testing`) com:
+- `name`: Filtro por nome do produto
+- `min_price`: Preço mínimo
+- `max_price`: Preço máximo
+- `min_stock`: Estoque mínimo
+- `max_stock`: Estoque máximo
+- `page`: Número da página (padrão: 1)
+- `per_page`: Itens por página (padrão: 10)
 
-		```env
-		DB_CONNECTION=mysql
-		DB_HOST=127.0.0.1
-		DB_PORT=3306
-		DB_DATABASE=desafio_produtos
-		DB_USERNAME=root
-		DB_PASSWORD=root
-		```
-
-	- Execute as migrações contra MySQL e rode os testes:
-
-		```bash
-		php artisan migrate
-		php artisan test --filter ProductApiTest
-		```
+**Exemplo**:
+```bash
+GET /api/products?name=mouse&min_price=100&max_price=300&page=1&per_page=5
+```
 
