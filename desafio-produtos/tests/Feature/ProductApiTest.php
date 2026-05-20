@@ -42,7 +42,7 @@ class ProductApiTest extends TestCase
         ]);
     }
 
-     public function test_can_list_products(): void
+    public function test_can_list_products(): void
     {
         Product::factory()->count(3)->create();
 
@@ -51,5 +51,17 @@ class ProductApiTest extends TestCase
         $response
             ->assertOk()
             ->assertJsonPath('success', true);
+    }
+
+    public function test_can_show_product(): void
+    {
+        $product = Product::factory()->create();
+
+        $response = $this->getJson("/api/products/{$product->id}");
+
+        $response
+            ->assertOk()
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.id', $product->id);
     }
 }
