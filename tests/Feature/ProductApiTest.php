@@ -53,6 +53,35 @@ class ProductApiTest extends TestCase
             ->assertJsonPath('success', true);
     }
 
+    public function test_can_paginate_products_and_keep_cache_separated_by_page(): void
+    {
+        $products = Product::factory()->count(12)->create();
+
+        $firstPage = $this->getJson('/api/products?per_page=5&page=1');
+        $secondPage = $this->getJson('/api/products?per_page=5&page=2');
+
+        $firstPage
+            ->assertOk()
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.meta.current_page', 1)
+            ->assertJsonPath('data.meta.per_page', 5)
+            ->assertJsonPath('data.meta.total', 12)
+            ->assertJsonCount(5, 'data.items');
+
+        $secondPage
+            ->assertOk()
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.meta.current_page', 2)
+            ->assertJsonPath('data.meta.per_page', 5)
+            ->assertJsonCount(5, 'data.items');
+
+        $firstPageIds = collect($firstPage->json('data.items'))->pluck('id');
+        $secondPageIds = collect($secondPage->json('data.items'))->pluck('id');
+
+        $this->assertNotEquals($firstPageIds->all(), $secondPageIds->all());
+        $this->assertTrue($products->pluck('id')->contains($firstPageIds->first()));
+    }
+
     public function test_can_show_product(): void
     {
         $product = Product::factory()->create();

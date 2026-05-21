@@ -16,6 +16,9 @@ class ProductController extends Controller
 
     use ApiResponse;
 
+    private const DEFAULT_PER_PAGE = 10;
+    private const DEFAULT_PAGE = 1;
+
     /**
      * Display a listing of the resource.
      */
@@ -27,19 +30,17 @@ class ProductController extends Controller
             'max_price',
             'min_stock',
             'max_stock',
-            'page',
-            'per_page',
         ]);
 
-        $perPage = (int) $request->get('per_page', 10);
+        $perPage = max(1, (int) $request->integer('per_page', self::DEFAULT_PER_PAGE));
+        $page = max(1, (int) $request->integer('page', self::DEFAULT_PAGE));
+        $cacheKey = $this->buildIndexCacheKey($filters, $page, $perPage);
 
-        $cacheKey = 'products:' . md5(json_encode($filters));
-
-        $products = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($filters, $perPage) {
+        $products = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($filters, $perPage, $page) {
             return Product::query()
                 ->filter($filters)
                 ->orderByDesc('id')
-                ->paginate($perPage);
+                ->paginate($perPage, ['*'], 'page', $page);
         });
 
         return $this->success('Products retrieved successfully.', [
@@ -49,8 +50,21 @@ class ProductController extends Controller
                 'last_page' => $products->lastPage(),
                 'per_page' => $products->perPage(),
                 'total' => $products->total(),
+                'from' => $products->firstItem(),
+                'to' => $products->lastItem(),
             ],
         ]);
+    }
+
+    private function buildIndexCacheKey(array $filters, int $page, int $perPage): string
+    {
+        ksort($filters);
+
+        return 'products:index:' . md5(json_encode([
+            'filters' => $filters,
+            'page' => $page,
+            'per_page' => $perPage,
+        ]));
     }
 
     /**
