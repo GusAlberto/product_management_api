@@ -103,10 +103,14 @@ php artisan migrate
 php artisan test
 
 # Apenas o teste de produtos
-php artisan test --filter ProductApiTest
+# Apenas os testes de produto (use o filtro por padrão 'Product')
+php artisan test --filter Product
 
-# Com saída detalhada
-./vendor/bin/phpunit tests/Feature/ProductApiTest.php
+# Executar todos os testes de feature
+php artisan test --testsuite=feature
+
+# Executar arquivos de testes específicos
+./vendor/bin/phpunit tests/Feature
 ```
 
 ![Resultado dos testes](tests_print.png)
