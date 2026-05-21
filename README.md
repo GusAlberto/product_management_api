@@ -102,15 +102,11 @@ php artisan migrate
 # Todos os testes
 php artisan test
 
-# Apenas o teste de produtos
 # Apenas os testes de produto (use o filtro por padrão 'Product')
 php artisan test --filter Product
 
-# Executar todos os testes de feature
-php artisan test --testsuite=feature
-
-# Executar arquivos de testes específicos
-./vendor/bin/phpunit tests/Feature
+# Executar a pasta de feature diretamente
+./vendor/bin/phpunit tests/Feature 
 ```
 
 ![Resultado dos testes](tests_print.png)
