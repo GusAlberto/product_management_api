@@ -26,6 +26,8 @@ class ProductShowTest extends ApiTestCase
 
         $response = $this->getJson('/api/products/999999');
 
-        $response->assertNotFound();
+        $response
+            ->assertNotFound()
+            ->assertJsonPath('message', 'O produto não foi encontrado. Talvez ele tenha sido removido ou o ID esteja incorreto.');
     }
 }
