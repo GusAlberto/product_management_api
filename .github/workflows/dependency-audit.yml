@@ -1,5 +1,4 @@
 name: Dependency Audit
-
 on:
   push:
     branches: [ main, develop ]
