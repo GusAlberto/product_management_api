@@ -120,6 +120,15 @@ Este projeto usa o gerador OpenAPI do Laravel via `dedoc/scramble`.
 - UI interativa: `/docs/api`
 - Especificação JSON: `/docs/api.json`
 
+Para executar `Try it out` sem erro `401 Unauthorized`:
+
+1. Abra `/docs/api`.
+2. Clique em `Authorize`.
+3. Informe `Bearer local-demo-token`.
+4. Execute o endpoint `POST /api/products`.
+
+Opcionalmente, você pode abrir `/login-temporario` para testar o fluxo por sessão no navegador.
+
 Os endpoints de produto já incluem exemplos de parâmetros e payloads, além de códigos de status documentados na especificação gerada.
 
 ### Listar Produtos
