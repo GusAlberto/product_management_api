@@ -24,7 +24,7 @@ class SessionLoginTest extends ApiTestCase
 
         $this->assertAuthenticated();
 
-        $apiResponse = $this->getJson('/api/products');
+        $apiResponse = $this->getJson('/browser/products');
 
         $apiResponse
             ->assertOk()

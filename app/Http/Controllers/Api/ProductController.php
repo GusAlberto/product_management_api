@@ -48,24 +48,26 @@ class ProductController extends Controller
         $page = max(1, (int) $request->integer('page', self::DEFAULT_PAGE));
         $cacheKey = $this->buildIndexCacheKey($filters, $page, $perPage);
 
-        $products = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($filters, $perPage, $page) {
-            return Product::query()
+        $payload = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($filters, $perPage, $page) {
+            $products = Product::query()
                 ->filter($filters)
                 ->orderByDesc('id')
                 ->paginate($perPage, ['*'], 'page', $page);
+
+            return [
+                'items' => ProductResource::collection($products->items())->resolve(),
+                'meta' => [
+                    'current_page' => $products->currentPage(),
+                    'last_page' => $products->lastPage(),
+                    'per_page' => $products->perPage(),
+                    'total' => $products->total(),
+                    'from' => $products->firstItem(),
+                    'to' => $products->lastItem(),
+                ],
+            ];
         });
 
-        return $this->success('Products retrieved successfully.', [
-            'items' => ProductResource::collection($products->items()),
-            'meta' => [
-                'current_page' => $products->currentPage(),
-                'last_page' => $products->lastPage(),
-                'per_page' => $products->perPage(),
-                'total' => $products->total(),
-                'from' => $products->firstItem(),
-                'to' => $products->lastItem(),
-            ],
-        ]);
+        return $this->success('Products retrieved successfully.', $payload);
     }
 
     private function buildIndexCacheKey(array $filters, int $page, int $perPage): string
