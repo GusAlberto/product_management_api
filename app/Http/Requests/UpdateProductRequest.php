@@ -20,12 +20,28 @@ class UpdateProductRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
-     public function rules(): array
+    public function rules(): array
     {
         return [
+            /**
+             * Product name.
+             * @example "Wireless Mouse"
+             */
             'name' => ['sometimes', 'required', 'string', 'max:255'],
+            /**
+             * Product description shown on the product detail page.
+             * @example "Compact wireless mouse with silent clicks."
+             */
             'description' => ['nullable', 'string'],
+            /**
+             * Product price in the store currency.
+             * @example 139.90
+             */
             'price' => ['sometimes', 'required', 'numeric', 'min:0'],
+            /**
+             * Available stock quantity.
+             * @example 48
+             */
             'stock' => ['sometimes', 'required', 'integer', 'min:0'],
         ];
     }

@@ -113,6 +113,15 @@ php artisan test --filter Product
 
 ## Endpoints da API
 
+### Documentação OpenAPI / Swagger
+
+Este projeto usa o gerador OpenAPI do Laravel via `dedoc/scramble`.
+
+- UI interativa: `/docs/api`
+- Especificação JSON: `/docs/api.json`
+
+Os endpoints de produto já incluem exemplos de parâmetros e payloads, além de códigos de status documentados na especificação gerada.
+
 ### Listar Produtos
 ```bash
 GET /api/products?name=mouse&min_price=50&max_price=200&min_stock=1&page=1&per_page=10
