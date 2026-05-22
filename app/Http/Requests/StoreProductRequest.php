@@ -23,9 +23,25 @@ class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         return [
+            /**
+             * Product name.
+             * @example "Wireless Mouse"
+             */
             'name' => 'required|string|max:255',
+            /**
+             * Product description shown on the product detail page.
+             * @example "Compact wireless mouse with silent clicks."
+             */
             'description' => 'nullable|string',
+            /**
+             * Product price in the store currency.
+             * @example 129.90
+             */
             'price' => 'required|numeric|min:0',
+            /**
+             * Available stock quantity.
+             * @example 50
+             */
             'stock' => 'required|integer|min:0',
         ];
     }
