@@ -1,12 +1,9 @@
 <?php
 
-use App\Models\Product;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Exceptions\Renderers\ProductNotFoundRenderer;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -21,23 +18,5 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (NotFoundHttpException $exception, Request $request) {
-            if (! $request->expectsJson()) {
-                return null;
-            }
-
-            $previous = $exception->getPrevious();
-
-            if (! $previous instanceof ModelNotFoundException) {
-                return null;
-            }
-
-            if ($previous->getModel() !== Product::class) {
-                return null;
-            }
-
-            return response()->json([
-                'message' => 'O produto não foi encontrado. Talvez ele tenha sido removido ou o ID esteja incorreto.',
-            ], 404);
-        });
+        $exceptions->render(app(ProductNotFoundRenderer::class));
     })->create();
