@@ -20,7 +20,9 @@ Route::get('/login-temporario', function () {
         ]
     );
 
-    return view('session-login');
+    return view('session-login', [
+        'swaggerToken' => env('PRODUCTS_API_TOKEN', 'local-demo-token'),
+    ]);
 })->name('login');
 
 Route::get('/login', function () {

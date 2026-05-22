@@ -30,4 +30,15 @@ class SessionLoginTest extends ApiTestCase
             ->assertOk()
             ->assertJsonPath('success', true);
     }
+
+    public function test_demo_bearer_token_allows_api_access_without_session(): void
+    {
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer local-demo-token',
+        ])->getJson('/api/products');
+
+        $response
+            ->assertOk()
+            ->assertJsonPath('success', true);
+    }
 }

@@ -136,6 +136,18 @@
             color: var(--muted);
         }
 
+        .token {
+            margin-top: 16px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: rgba(34, 197, 94, 0.12);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            color: var(--text);
+            font-size: 14px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
         @media (max-width: 720px) {
             .card { padding: 20px; }
             .grid { grid-template-columns: 1fr; }
@@ -168,6 +180,11 @@
         </form>
 
         <div id="status" class="status">Ainda não autenticado.</div>
+        <div class="token">
+            Token do Swagger: <strong>{{ $swaggerToken }}</strong>
+            <br>
+            No Swagger, clique em Authorize e use <strong>Bearer {{ $swaggerToken }}</strong>.
+        </div>
         <div class="note">Depois do login, a mesma sessão do navegador será usada para acessar /browser/products.</div>
     </main>
 
